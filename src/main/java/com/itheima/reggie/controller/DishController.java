@@ -8,7 +8,6 @@ import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Category;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
-import com.itheima.reggie.entity.Setmeal;
 import com.itheima.reggie.service.CategoryService;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
@@ -148,7 +147,7 @@ public class DishController {
     }
 
     /**
-     * 套餐的起售与停售
+     * 菜品的起售与停售
      * @param ids
      * @return
      */
@@ -165,4 +164,20 @@ public class DishController {
         return R.success("修改成功");
     }
 
+    /**
+     * 菜品的删除
+     * @param ids
+     * @return
+     */
+    /**
+     * 根据ID删除套餐信息，同时删除所关联的菜品
+     * @param ids
+     * @return
+     */
+    @DeleteMapping
+    public  R<String> delete(@RequestParam List<Long> ids){
+        log.info("ids==>{}" + ids);
+        dishService.removeWithDish(ids);
+        return R.success("菜品删除成功");
+    }
 }

@@ -24,8 +24,11 @@ public class OrdersController {
     private OrdersService ordersService;
 
 
-
-
+    /**
+     * 下单
+     * @param orders
+     * @return
+     */
     @PostMapping("/submit")
     public R<String> submit(@RequestBody Orders orders){
         ordersService.submit(orders);

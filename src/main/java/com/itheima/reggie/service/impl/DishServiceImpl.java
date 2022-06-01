@@ -2,12 +2,16 @@ package com.itheima.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.itheima.reggie.common.CustomException;
 import com.itheima.reggie.dto.DishDto;
 import com.itheima.reggie.entity.Dish;
 import com.itheima.reggie.entity.DishFlavor;
+import com.itheima.reggie.entity.Setmeal;
+import com.itheima.reggie.entity.SetmealDish;
 import com.itheima.reggie.mapper.DishMapper;
 import com.itheima.reggie.service.DishFlavorService;
 import com.itheima.reggie.service.DishService;
+import com.itheima.reggie.service.SetmealDishService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
 
     @Resource
     private DishFlavorService dishFlavorService;
+
+    @Resource
+    private SetmealDishService setmealDishService;
 
     /**
      * 新增菜品，同时插入菜品对应的口味数据
@@ -84,6 +91,29 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             return item;
         }).collect(Collectors.toList());
         dishFlavorService.saveBatch(flavors);
+    }
+
+    /**
+     * 根据ID删除菜品
+     * @param ids
+     */
+    @Override
+    public void removeWithDish(List<Long> ids) {
+        // 查询菜品状态确定是否可以删除
+        LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Dish::getId, ids);
+        queryWrapper.eq(Dish::getStatus, 1);
+        int count = this.count(queryWrapper);
+        // 查到起售数据
+        if (count > 0) {
+            throw new CustomException("菜品正在售卖,无法删除");
+        }
+        // 可以删除，先删除套餐表中数据
+        this.removeByIds(ids);
+        // 删除关系表中数据
+        LambdaQueryWrapper<SetmealDish> setmealDishLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        setmealDishLambdaQueryWrapper.in(SetmealDish::getSetmealId, ids);
+        setmealDishService.remove(setmealDishLambdaQueryWrapper);
     }
 
 }
