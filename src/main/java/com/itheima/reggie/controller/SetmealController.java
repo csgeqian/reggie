@@ -126,4 +126,31 @@ public class SetmealController {
         List<Setmeal> list = setmealService.list(queryWrapper);
         return R.success(list);
     }
+
+    /**
+     * 修改套餐
+     * @param setmealDto
+     * @return R<String>
+     */
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto){
+        log.info("修改套餐信息{}", setmealDto);
+        // 执行更新。
+        setmealService.updateWithSetmeal(setmealDto);
+        return R.success("套餐修改成功");
+    }
+
+    /**
+     * 根据id查询套餐信息
+     *(套餐信息的回显)
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    public R<SetmealDto> getById(@PathVariable Long id) {
+        log.info("根据id查询套餐信息:{}", id);
+        // 调用service执行查询
+        SetmealDto setmealDto = setmealService.getByIdWithDish(id);
+        return R.success(setmealDto);
+    }
 }

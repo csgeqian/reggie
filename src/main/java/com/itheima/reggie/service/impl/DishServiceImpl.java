@@ -30,8 +30,6 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     @Resource
     private DishFlavorService dishFlavorService;
 
-    @Resource
-    private SetmealDishService setmealDishService;
 
     /**
      * 新增菜品，同时插入菜品对应的口味数据
@@ -108,12 +106,12 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         if (count > 0) {
             throw new CustomException("菜品正在售卖,无法删除");
         }
-        // 可以删除，先删除套餐表中数据
+        // 可以删除，先删除菜品对应的口味表数据
+        LambdaQueryWrapper<DishFlavor> dishFlavorLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        dishFlavorLambdaQueryWrapper.in(DishFlavor::getDishId, ids);
+        dishFlavorService.remove(dishFlavorLambdaQueryWrapper);
+        // 再删除菜品
         this.removeByIds(ids);
-        // 删除关系表中数据
-        LambdaQueryWrapper<SetmealDish> setmealDishLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        setmealDishLambdaQueryWrapper.in(SetmealDish::getSetmealId, ids);
-        setmealDishService.remove(setmealDishLambdaQueryWrapper);
     }
 
 }
