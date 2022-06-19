@@ -6,6 +6,7 @@ import com.itheima.reggie.common.R;
 import com.itheima.reggie.entity.ShoppingCart;
 import com.itheima.reggie.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -80,11 +81,39 @@ public class ShoppingCartController {
      */
     @DeleteMapping("/clean")
     public R<String> clean(){
-
         LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(ShoppingCart::getUserId,BaseContext.getCurrentId());
         shoppingCartService.remove(queryWrapper);
         return R.success("清空购物车成功");
 
     }
+
+    @PostMapping("/sub")
+    public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart) {
+        Long userId = BaseContext.getCurrentId();
+        //设置用户id，指定当前是哪个用户的购物车数据 ,否则会出现用户互相修改对方与自己购物车中相同套餐或者是菜品的数量
+        shoppingCart.setUserId(userId);
+        Long dishId = shoppingCart.getDishId();
+        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ShoppingCart::getUserId, shoppingCart.getUserId());
+        if (dishId != null) {
+            //说明此次添加的是菜品
+            queryWrapper.eq(ShoppingCart::getDishId, shoppingCart.getDishId());
+        } else {
+            //添加的是套餐
+            queryWrapper.eq(ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
+        }
+        ShoppingCart cartServiceOne = shoppingCartService.getOne(queryWrapper);
+        cartServiceOne.setNumber( cartServiceOne.getNumber() - 1);
+        Integer number = cartServiceOne.getNumber();
+        //查询出来的数量为1，点击减少菜品或套餐时，即number=0，直接执行else语句块的删除
+        if (number  > 0) {
+            shoppingCartService.updateById(cartServiceOne);
+        } else {
+            //直接在shopping_cart表中清除当前数据
+            shoppingCartService.removeById(cartServiceOne);
+        }
+        return R.success(cartServiceOne);
+    }
+
 }
