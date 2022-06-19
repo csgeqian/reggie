@@ -12,6 +12,7 @@ import com.itheima.reggie.service.UserService;
 import com.itheima.reggie.utils.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,6 +75,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @Transactional
     public R<User> login(@RequestBody Map map, HttpSession session){
         log.info(map.toString());
         // 获取手机号
