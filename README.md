@@ -63,6 +63,13 @@
 
 ![img.png](imgs/img_01.png)
 
+APP端管理页面: [http://localhost:8080/front/index.html](http://localhost:8080/front/index.html)
+
+菜品展示页：
+
+![img.png](imgs/img_02.png)
+
+
 
 
 
