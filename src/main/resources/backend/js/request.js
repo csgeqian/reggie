@@ -7,6 +7,7 @@
     // 超时
     timeout: 1000000
   })
+
   // request拦截器
   service.interceptors.request.use(config => {
     // 是否需要设置 token

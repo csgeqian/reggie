@@ -26,6 +26,7 @@
             <artifactId>aliyun-java-sdk-core</artifactId>
             <version>4.5.16</version>
         </dependency>
+
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
@@ -98,7 +99,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.4.5</version>
+                <version>2.4.1</version>
             </plugin>
         </plugins>
     </build>

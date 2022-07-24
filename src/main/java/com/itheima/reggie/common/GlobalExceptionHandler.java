@@ -21,7 +21,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler {
 
     /**
-     * 异常处理方法
+     * 异常处理
      * @param ex
      * @return
      */
